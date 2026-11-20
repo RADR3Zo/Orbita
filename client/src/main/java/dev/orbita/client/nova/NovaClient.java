@@ -53,9 +53,6 @@ public final class NovaClient {
             modules.tick();
             if (c.level != null) {
                 dev.orbita.client.nova.module.Combat.tick();
-                dev.orbita.client.nova.gfx.Fx.tick();
-            } else {
-                dev.orbita.client.nova.gfx.Fx.clear();
             }
             dev.orbita.client.nova.core.FpsRecorder.tick(c); // FPS de cada partida para la página Rendimiento del launcher
         });
@@ -73,7 +70,6 @@ public final class NovaClient {
                 c -> {
                     if (modules != null) {
                         modules.worldAfter(c);
-                        dev.orbita.client.nova.gfx.Fx.render(c);
                     }
                 });
         // a quién le pegas (solo para efectos visuales: no cambia el golpe)
