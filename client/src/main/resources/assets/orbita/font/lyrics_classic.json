@@ -1,0 +1,15 @@
+{
+  "providers": [
+    {
+      "type": "ttf",
+      "file": "orbita:lyrics_classic.ttf",
+      "size": 24.0,
+      "oversample": 3.0,
+      "shift": [0, 2.0]
+    },
+    {
+      "type": "reference",
+      "id": "minecraft:default"
+    }
+  ]
+}

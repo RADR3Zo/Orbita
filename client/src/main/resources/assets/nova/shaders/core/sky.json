@@ -1,0 +1,14 @@
+{
+    "vertex": "nova:core/sky",
+    "fragment": "nova:core/sky",
+    "samplers": [],
+    "uniforms": [
+        { "name": "ModelViewMat", "type": "matrix4x4", "count": 16, "values": [ 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0 ] },
+        { "name": "ProjMat", "type": "matrix4x4", "count": 16, "values": [ 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0 ] },
+        { "name": "ColorModulator", "type": "float", "count": 4, "values": [ 1.0, 1.0, 1.0, 1.0 ] },
+        { "name": "NovaTime", "type": "float", "count": 1, "values": [ 0.0 ] },
+        { "name": "NovaColor", "type": "float", "count": 3, "values": [ 0.6, 0.3, 1.0 ] },
+        { "name": "NovaColor2", "type": "float", "count": 3, "values": [ 0.2, 0.5, 1.0 ] },
+        { "name": "NovaParams", "type": "float", "count": 4, "values": [ 0.0, 1.0, 0.0, 0.0 ] }
+    ]
+}

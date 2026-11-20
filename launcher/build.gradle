@@ -1,0 +1,82 @@
+plugins {
+    id 'java'
+    id 'application'
+}
+
+evaluationDependsOn(':client')
+
+version = orbita_version
+group = 'dev.orbita'
+
+base {
+    archivesName = 'orbita-launcher'
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'com.google.code.gson:gson:2.11.0'
+    // Lector WebP para ImageIO: Modrinth sirve la mayoría de iconos de mods en .webp
+    implementation 'com.twelvemonkeys.imageio:imageio-webp:3.12.0'
+    // Video y música de fondo (JavaFX Media, natives de Windows). Solo se inicia si se usa.
+    implementation 'org.openjfx:javafx-base:21.0.5:win'
+    implementation 'org.openjfx:javafx-graphics:21.0.5:win'
+    implementation 'org.openjfx:javafx-media:21.0.5:win'
+    implementation 'org.openjfx:javafx-swing:21.0.5:win'
+    // Navegador integrado para el login de Microsoft con correo y contraseña (como el launcher oficial)
+    implementation 'org.openjfx:javafx-controls:21.0.5:win'
+    implementation 'org.openjfx:javafx-web:21.0.5:win'
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_21
+    targetCompatibility = JavaVersion.VERSION_21
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+    options.release = 21
+}
+
+application {
+    mainClass = 'dev.orbita.launcher.OrbitaLauncher'
+}
+
+// El launcher lleva dentro el mod cliente ya compilado y lo copia a mods/ al jugar.
+def clientJar = project(':client').tasks.named('remapJar')
+
+processResources {
+    dependsOn clientJar
+    from(clientJar.flatMap { it.archiveFile }) {
+        into 'bundled'
+        rename { 'orbita-client.jar' }
+    }
+    def props = [version: version, minecraft: minecraft_version, loader: loader_version]
+    inputs.properties props
+    filesMatching('orbita-launcher.properties') {
+        expand props
+    }
+}
+
+// Jar ejecutable con Gson incluido: build/dist/orbita-launcher-<version>.jar
+tasks.register('fatJar', Jar) {
+    group = 'build'
+    description = 'Jar ejecutable del launcher con todas sus dependencias.'
+    archiveBaseName = 'orbita-launcher'
+    destinationDirectory = layout.buildDirectory.dir('dist')
+    manifest {
+        attributes 'Main-Class': application.mainClass.get(), 'Implementation-Version': version
+    }
+    from sourceSets.main.output
+    dependsOn configurations.runtimeClasspath
+    from {
+        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+    } {
+        exclude 'META-INF/*.SF', 'META-INF/*.RSA', 'META-INF/*.DSA', 'module-info.class', 'META-INF/versions/*/module-info.class'
+    }
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+}
+
+assemble.dependsOn tasks.named('fatJar')

@@ -1,0 +1,11 @@
+{
+  "key.nova.menu": "Abrir menú de Nova",
+  "key.nova.zoom": "Zoom",
+  "key.nova.emotes": "Emotes",
+  "key.nova.macro1": "Mensaje rápido 1",
+  "key.nova.macro2": "Mensaje rápido 2",
+  "key.nova.macro3": "Mensaje rápido 3",
+  "key.nova.macro4": "Mensaje rápido 4",
+  "category.nova": "Nova Client",
+  "key.category.nova.main": "Nova Client"
+}

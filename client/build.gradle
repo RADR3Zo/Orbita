@@ -1,0 +1,48 @@
+plugins {
+    id 'net.fabricmc.fabric-loom-remap' version "${loom_version}"
+}
+
+version = orbita_version
+group = 'dev.orbita'
+
+base {
+    archivesName = 'orbita-client'
+}
+
+repositories {
+    mavenCentral() // JCodec (lector de MP4 para el video de fondo de Nova)
+}
+
+loom {
+    accessWidenerPath = file('src/main/resources/orbita.accesswidener')
+}
+
+dependencies {
+    minecraft "com.mojang:minecraft:${minecraft_version}"
+    mappings loom.officialMojangMappings()
+    modImplementation "net.fabricmc:fabric-loader:${loader_version}"
+    modImplementation "net.fabricmc.fabric-api:fabric-api:${fabric_version}"
+    implementation 'org.jcodec:jcodec:0.2.5'
+    implementation 'org.jcodec:jcodec-javase:0.2.5'
+    include 'org.jcodec:jcodec:0.2.5'
+    include 'org.jcodec:jcodec-javase:0.2.5'
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_21
+    targetCompatibility = JavaVersion.VERSION_21
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+    options.release = 21
+}
+
+processResources {
+    def props = [version: version, minecraft_version: minecraft_version, loader_version: loader_version]
+    inputs.properties props
+    filteringCharset = 'UTF-8'
+    filesMatching('fabric.mod.json') {
+        expand props
+    }
+}

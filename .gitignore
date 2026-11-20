@@ -1,0 +1,19 @@
+# Gradle / compilación
+.gradle/
+build/
+dist/
+run/
+out/
+
+# IDEs
+*.iml
+.idea/
+.vscode/
+
+# Sistema
+Thumbs.db
+desktop.ini
+.DS_Store
+
+# Logs
+*.log

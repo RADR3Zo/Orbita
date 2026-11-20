@@ -1,0 +1,24 @@
+{
+  "required": true,
+  "package": "dev.orbita.client.nova.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "client": [
+    "AbstractClientPlayerEntityMixin",
+    "BackgroundRendererMixin",
+    "FpsLimiterMixin",
+    "LiteModeMixins$Atlas",
+    "LiteModeMixins$Glint",
+    "LiteModeMixins$Vignette",
+    "LiteModeMixins$Sky",
+    "ParticleManagerMixin",
+    "SpriteContentsMixin",
+    "PvpMixins$Text",
+    "LabelMixin",
+    "WorldScaleMixins$World",
+    "WorldScaleMixins$Target",
+    "ScreenMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

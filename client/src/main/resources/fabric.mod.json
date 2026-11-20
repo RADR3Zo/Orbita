@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 1,
+  "id": "orbita",
+  "version": "${version}",
+  "name": "Órbita",
+  "description": "Cliente Órbita: menú espacial, panel de HUD configurable, zoom y guardarropa de cosméticos.",
+  "authors": ["Órbita"],
+  "license": "All-Rights-Reserved",
+  "environment": "client",
+  "entrypoints": {
+    "client": ["dev.orbita.client.OrbitaClient"]
+  },
+  "mixins": ["orbita.mixins.json", "orbita-nova.mixins.json"],
+  "accessWidener": "orbita.accesswidener",
+  "depends": {
+    "fabricloader": ">=${loader_version}",
+    "fabric-api": "*",
+    "minecraft": "${minecraft_version}",
+    "java": ">=21"
+  }
+}
