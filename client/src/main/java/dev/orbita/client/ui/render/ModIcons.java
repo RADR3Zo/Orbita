@@ -334,6 +334,13 @@ public final class ModIcons {
                 g.draw(p);
                 circle(g, 32, 32, 9, true);
             }
+            case "fullbright" -> { // sol con rayos
+                circle(g, 32, 32, 11, true);
+                for (int i = 0; i < 8; i++) {
+                    double a = Math.PI / 4 * i;
+                    line(g, 32 + Math.cos(a) * 18, 32 + Math.sin(a) * 18, 32 + Math.cos(a) * 27, 32 + Math.sin(a) * 27);
+                }
+            }
             case "profile" -> { // percha (guardarropa)
                 g.draw(new Arc2D.Double(25, 6, 14, 14, -90, 270, Arc2D.OPEN));
                 g.draw(poly(32, 20, 58, 42, 6, 42));

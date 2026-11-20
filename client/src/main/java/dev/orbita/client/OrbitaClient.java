@@ -4,6 +4,7 @@ import com.mojang.blaze3d.platform.InputConstants;
 import dev.orbita.client.config.OrbitaConfig;
 import dev.orbita.client.feature.CombatTracker;
 import dev.orbita.client.feature.FreelookFeature;
+import dev.orbita.client.feature.FullbrightFeature;
 import dev.orbita.client.feature.SpotifyWatcher;
 import dev.orbita.client.feature.MotionTracker;
 import dev.orbita.client.feature.ZoomFeature;
@@ -38,6 +39,7 @@ public final class OrbitaClient implements ClientModInitializer {
     private static KeyMapping panelKey;
     private static KeyMapping zoomKey;
     private static KeyMapping freelookKey;
+    private static KeyMapping fullbrightKey;
     private static KeyMapping spotifyPlayKey;
     private static KeyMapping spotifyNextKey;
     private static KeyMapping spotifyPrevKey;
@@ -89,6 +91,9 @@ public final class OrbitaClient implements ClientModInitializer {
                 "key.orbita.zoom", InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_Z, category));
         freelookKey = KeyBindingHelper.registerKeyBinding(new KeyMapping(
                 "key.orbita.freelook", InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_LEFT_ALT, category));
+        // Sin tecla por defecto (para no chocar con otras): se asigna en el menú de mods o en Controles.
+        fullbrightKey = KeyBindingHelper.registerKeyBinding(new KeyMapping(
+                "key.orbita.fullbright", InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_UNKNOWN, category));
         spotifyPrevKey = KeyBindingHelper.registerKeyBinding(new KeyMapping(
                 "key.orbita.spotify_previous", InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_F7, category));
         spotifyPlayKey = KeyBindingHelper.registerKeyBinding(new KeyMapping(
@@ -118,6 +123,10 @@ public final class OrbitaClient implements ClientModInitializer {
                 freelookClick = true;
             }
             FreelookFeature.tick(mc, freelookKey.isDown(), freelookClick);
+            while (fullbrightKey.consumeClick()) {
+                FullbrightFeature.toggle();
+            }
+            FullbrightFeature.tick(mc);
             while (spotifyPlayKey.consumeClick()) {
                 SpotifyWatcher.send(SpotifyWatcher.Command.PLAY_PAUSE);
             }
@@ -134,6 +143,10 @@ public final class OrbitaClient implements ClientModInitializer {
         });
 
         LOG.info("Órbita {} inicializado", version());
+    }
+
+    public static KeyMapping fullbrightKey() {
+        return fullbrightKey;
     }
 
     public static KeyMapping zoomKey() {

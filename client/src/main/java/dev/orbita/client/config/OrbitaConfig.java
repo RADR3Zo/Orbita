@@ -40,6 +40,8 @@ public final class OrbitaConfig {
     /** En 1.4.0 las letras venían apagadas; se encienden una vez al actualizar. */
     public boolean lyricsMigrated = false;
     public boolean freelookEnabled = true;
+    /** Fullbright: todo con luz máxima (visión nocturna solo en tu pantalla). */
+    public boolean fullbright = false;
     public boolean freelookToggle = false;
     public boolean freelookInvert = false;
     public boolean toggleSneak = false;

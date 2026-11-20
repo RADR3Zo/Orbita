@@ -42,6 +42,7 @@ import dev.orbita.client.ui.screen.PanelEntries.ModuleEntry;
 import dev.orbita.client.ui.screen.PanelEntries.NovaEntry;
 
 import static dev.orbita.client.ui.screen.PanelEntries.FREELOOK;
+import static dev.orbita.client.ui.screen.PanelEntries.FULLBRIGHT;
 import static dev.orbita.client.ui.screen.PanelEntries.PROFILE;
 import static dev.orbita.client.ui.screen.PanelEntries.ZOOM;
 import static dev.orbita.client.ui.screen.PanelEntries.saveNova;
@@ -97,6 +98,7 @@ public class ControlPanelScreen extends Screen {
         }
         all.add(ZOOM);
         all.add(FREELOOK);
+        all.add(FULLBRIGHT);
         if (dev.orbita.client.nova.NovaClient.modules != null) {
             for (dev.orbita.client.nova.module.Module m : dev.orbita.client.nova.NovaClient.modules.all) {
                 NovaEntry e = NovaEntry.of(m);
@@ -299,6 +301,10 @@ public class ControlPanelScreen extends Screen {
                     () -> cfg.freelookToggle, v -> cfg.freelookToggle = v);
             toggleRow("Invertir eje vertical", "Mover el ratón arriba mira hacia abajo",
                     () -> cfg.freelookInvert, v -> cfg.freelookInvert = v);
+        } else if (options == FULLBRIGHT) {
+            toggleRow("Activado", "Todo con luz máxima: cuevas, noche y Nether",
+                    dev.orbita.client.feature.FullbrightFeature::enabled, dev.orbita.client.feature.FullbrightFeature::setEnabled);
+            keyRow("Tecla", "Pulsa para encender o apagar (sin tecla por defecto)", new String[]{""}, OrbitaClient.fullbrightKey());
         } else if (options == ZOOM) {
             OrbitaConfig cfg = OrbitaConfig.get();
             toggleRow("Activado", "Acerca la vista manteniendo una tecla",
@@ -904,7 +910,7 @@ public class ControlPanelScreen extends Screen {
             } else {
                 g.drawString(f, name, cx - nw / 2, y + ht - BAR - 13, OrbitaTheme.TEXT, false);
             }
-            if (!e.toggleable() || e instanceof ModuleEntry || e == ZOOM || e == FREELOOK) {
+            if (!e.toggleable() || e instanceof ModuleEntry || e == ZOOM || e == FREELOOK || e == FULLBRIGHT) {
                 g.drawString(f, "⚙", x + w - 11, y + 4, OrbitaTheme.withAlpha(OrbitaTheme.TEXT_MUTED, 0.5f + h * 0.5f), false);
             }
 

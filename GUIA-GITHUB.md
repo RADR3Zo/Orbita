@@ -76,7 +76,8 @@ pasarles el `.zip` de la 1.6.0 a mano. A partir de ahí ya se actualizan solas.
 
 1. Haz tus cambios y pruébalos.
 2. Sube la versión en `gradle.properties`, por ejemplo `orbita_version=1.6.1`.
-3. Ejecuta:
+3. Escribe las novedades en `novedades/1.6.1.md` (es lo que verán los jugadores al actualizar).
+4. Ejecuta:
 
    ```powershell
    git add -A
@@ -91,8 +92,8 @@ Cuando termine **Publicar release**, cualquier PC con Órbita verá al abrirlo:
 
 ### Escribir las novedades
 
-Las novedades que ve el usuario salen de las notas de la release. GitHub las genera a partir de tus commits,
-y puedes editarlas en **Releases → (tu versión) → Edit**.
+Las novedades que ve el usuario salen de `novedades/<versión>.md`. También puedes editarlas después en
+**Releases → (tu versión) → Edit**.
 
 ### Cuándo hace falta el .zip completo
 

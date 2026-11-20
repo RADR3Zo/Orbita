@@ -22,12 +22,12 @@ public final class PotionHudModule extends HudModule {
 
     @Override
     public boolean hasContent(Minecraft mc) {
-        return !mc.player.getActiveEffects().isEmpty();
+        return !effects(mc).isEmpty();
     }
 
     @Override
     public void render(GuiGraphics g, Minecraft mc) {
-        Collection<MobEffectInstance> effects = mc.player.getActiveEffects();
+        Collection<MobEffectInstance> effects = effects(mc);
         float tickRate = mc.level == null ? 20f : mc.level.tickRateManager().tickrate();
         int textW = 0;
         for (MobEffectInstance e : effects) {
@@ -48,6 +48,13 @@ public final class PotionHudModule extends HudModule {
             g.drawString(mc.font, MobEffectUtil.formatDuration(e, 1.0f, tickRate), 26, ry + 11, dur, shadow());
             ry += ROW;
         }
+    }
+
+    /** Efectos activos, sin la visión nocturna que pone Fullbright (no es una poción de verdad). */
+    private static Collection<MobEffectInstance> effects(Minecraft mc) {
+        return mc.player.getActiveEffects().stream()
+                .filter(e -> !dev.orbita.client.feature.FullbrightFeature.isOurs(e))
+                .toList();
     }
 
     private static String name(MobEffectInstance e) {

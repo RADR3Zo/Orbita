@@ -14,6 +14,7 @@ Cliente de Minecraft con estética espacial: un **launcher para Windows** (Java 
    - **Shift derecho**: menú de mods de Órbita.
    - **Z** (mantener): zoom. La rueda del ratón ajusta el aumento.
    - **Alt izquierdo** (mantener): Freelook, para mirar alrededor sin girar a tu personaje.
+   - **Fullbright**: luz máxima en cuevas y de noche. Se enciende y apaga en su tarjeta del menú de mods (Mecánicas); también puedes asignarle una tecla.
    - **F7 / F8 / F9**: Spotify, canción anterior / pausar o reanudar / siguiente.
    - Todas las teclas se cambian desde el menú de mods (opciones de Zoom, Freelook y Spotify) o en Opciones → Controles → Órbita.
 
@@ -30,6 +31,7 @@ Cliente de Minecraft con estética espacial: un **launcher para Windows** (Java 
 | Traído de Nova | Pestañas Cosméticos, Visual y Rendimiento en el menú de mods: alas, capa, halo, corona, sombrero, bandana, mascota, monedas, estela, anillos de aura, sello en el suelo y emotes (tecla B); cielos animados y video de fondo (MP4/GIF en .orbita\nova\videos, también en el menú principal); modo ahorro Medio/Extra, FPS Boost, FPS inteligentes, desbloquear FPS, modo ligero y sin partículas/nubes/lluvia; efectos de crítico, nombres y vida al apuntar, cambiar tu nombre solo en tu pantalla y contador de manzanas doradas (HUD) |
 | Launcher | Página **Cuentas** (varias cuentas sin premium y de Microsoft, eliges con cuál jugar) y página **Rendimiento** (tus FPS por partida con gráfico, tu equipo, perfiles de gráficos y RAM recomendada) |
 | Apariencia del launcher | Animación de inicio por el universo (se salta con clic, Esc, Espacio o Enter), 8 temas de color o uno personalizado, y fondo de universo, color, imagen (también GIF) o video MP4 (H.264) con o sin sonido, más música de fondo (MP3/WAV/M4A; los .aac sueltos no funcionan). El selector de archivos es el de Windows y se abre en tus carpetas de Videos, Música o Imágenes. Todo se pausa mientras juegas |
+| Fullbright | Ves todo con luz máxima aunque esté oscuro. Solo en tu pantalla (visión nocturna local, sin icono ni partículas) y no aparece en el HUD de Pociones. Se activa y desactiva desde su tarjeta o con una tecla que elijas |
 | Freelook | Cámara libre en tercera persona; modo mantener o alternar e invertir el eje vertical |
 | Rendimiento | Recolector ZGC generacional (pausas de menos de 1 ms; G1 opcional en Ajustes), memoria de Java fija, texto del HUD en caché, arte del menú generado en segundo plano y el pack con Dynamic FPS y MoreCulling. El launcher oculto no gasta CPU y Spotify solo lee un título de ventana cada 1,5 s (5 s con el juego en segundo plano; nada si el módulo está apagado) |
 | Editor de HUD | Arrastrar para mover, rueda para escalar y clic derecho para abrir las opciones del módulo |

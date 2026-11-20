@@ -189,6 +189,50 @@ final class PanelEntries {
         }
     };
 
+    private static final ItemStack ICON_FULLBRIGHT = new ItemStack(Items.GLOWSTONE);
+
+    static final PanelCard FULLBRIGHT = new PanelCard() {
+        public String name() {
+            return "Fullbright";
+        }
+
+        public String description() {
+            return "Ve todo con luz máxima, aunque esté oscuro";
+        }
+
+        public String glyph() {
+            return "LUZ";
+        }
+
+        public String iconKey() {
+            return "fullbright";
+        }
+
+        public ItemStack icon() {
+            return ICON_FULLBRIGHT;
+        }
+
+        public PanelFilter filter() {
+            return PanelFilter.MECHANIC;
+        }
+
+        public boolean toggleable() {
+            return true;
+        }
+
+        public boolean enabled() {
+            return dev.orbita.client.feature.FullbrightFeature.enabled();
+        }
+
+        public void setEnabled(boolean value) {
+            dev.orbita.client.feature.FullbrightFeature.setEnabled(value);
+        }
+
+        public void open(ControlPanelScreen screen) {
+            screen.showOptions(this);
+        }
+    };
+
     static final PanelCard PROFILE = new PanelCard() {
         public String name() {
             return "Perfil y capas";

@@ -1,7 +1,8 @@
 # Publica una actualización de Órbita.
 #
 # Cómo usarlo:
-#   1. Sube orbita_version en gradle.properties (por ejemplo 1.5.5) y haz commit.
+#   1. Sube orbita_version en gradle.properties (por ejemplo 1.5.5), escribe las novedades
+#      en novedades/1.5.5.md y haz commit.
 #   2. Crea una etiqueta con esa versión y súbela:
 #        git tag v1.5.5
 #        git push origin v1.5.5
@@ -55,11 +56,19 @@ jobs:
         shell: pwsh
         run: ./build.ps1 -JavaHome '${{ steps.jdk21.outputs.path }}' -GradleJavaHome '${{ steps.jdk25.outputs.path }}' -GithubRepo '${{ github.repository }}'
 
+      - name: Preparar las novedades
+        shell: pwsh
+        run: |
+          # Las novedades salen de novedades/<versión>.md (es lo que ve la gente al actualizar).
+          $file = "novedades/$env:VERSION.md"
+          if (Test-Path $file) { Copy-Item $file dist/novedades.md }
+          else { Set-Content dist/novedades.md "Órbita $env:VERSION" -Encoding utf8 }
+
       - name: Crear la release en GitHub
         uses: softprops/action-gh-release@v2
         with:
           name: Órbita ${{ env.VERSION }}
-          generate_release_notes: true
+          body_path: dist/novedades.md
           files: |
             dist/Orbita-${{ env.VERSION }}-windows-x64.zip
             dist/orbita-launcher-${{ env.VERSION }}.jar
