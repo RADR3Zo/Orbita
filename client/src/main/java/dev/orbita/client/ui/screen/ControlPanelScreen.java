@@ -36,8 +36,8 @@ import java.util.Locale;
 import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
 
-import dev.orbita.client.ui.screen.PanelEntries.Entry;
-import dev.orbita.client.ui.screen.PanelEntries.Filter;
+import dev.orbita.client.ui.screen.PanelEntries.PanelCard;
+import dev.orbita.client.ui.screen.PanelEntries.PanelFilter;
 import dev.orbita.client.ui.screen.PanelEntries.ModuleEntry;
 import dev.orbita.client.ui.screen.PanelEntries.NovaEntry;
 
@@ -51,21 +51,21 @@ import static dev.orbita.client.ui.screen.PanelEntries.saveNova;
  * con interruptor ACTIVADO/DESACTIVADO. Al pulsar una tarjeta se abren sus opciones.
  */
 public class ControlPanelScreen extends Screen {
-    private static Filter lastFilter = Filter.ALL;
+    private static PanelFilter lastFilter = PanelFilter.ALL;
     /** Solo pruebas: abre directamente las opciones de este módulo de Nova. */
     @Nullable
     public static dev.orbita.client.nova.module.Module optionsForNova;
 
     private final Screen parent;
     private final Animation open = new Animation(0f, 9f);
-    private final List<Entry> all = new ArrayList<>();
-    private final List<Entry> visible = new ArrayList<>();
+    private final List<PanelCard> all = new ArrayList<>();
+    private final List<PanelCard> visible = new ArrayList<>();
     private final List<int[]> rowBoxes = new ArrayList<>();
-    private Filter filter = lastFilter;
+    private PanelFilter filter = lastFilter;
     private String search = "";
     private int scrollRow;
     @Nullable
-    private Entry options;
+    private PanelCard options;
     private int px, py, pw, ph, gx, gy, gw, gh, cols, rows, cardW;
     private int cardH = 82;
     private float scrollFrom;
@@ -114,8 +114,8 @@ public class ControlPanelScreen extends Screen {
     private void refilter() {
         visible.clear();
         String q = search.toLowerCase(Locale.ROOT).trim();
-        for (Entry e : all) {
-            if (filter != Filter.ALL && e.filter() != filter) {
+        for (PanelCard e : all) {
+            if (filter != PanelFilter.ALL && e.filter() != filter) {
                 continue;
             }
             if (!q.isEmpty() && !e.name().toLowerCase(Locale.ROOT).contains(q)
@@ -127,7 +127,7 @@ public class ControlPanelScreen extends Screen {
         scrollRow = 0;
     }
 
-    void showOptions(@Nullable Entry entry) {
+    void showOptions(@Nullable PanelCard entry) {
         options = entry;
         optionScroll = 0;
         rebuildWidgets();
@@ -169,7 +169,7 @@ public class ControlPanelScreen extends Screen {
         edit.active = minecraft.level != null;
         addRenderableWidget(edit.noIntro());
 
-        Filter[] filters = Filter.values();
+        PanelFilter[] filters = PanelFilter.values();
         // Ancho de cada pestaña según su texto (ahora son 7 y deben caber junto a "Editar HUD").
         int[] tabW = new int[filters.length];
         int totalW = 0;
@@ -180,7 +180,7 @@ public class ControlPanelScreen extends Screen {
         float squeeze = Math.min(1f, (pw - 20 - 66f) / totalW);
         int tabX = px + 10;
         for (int i = 0; i < filters.length; i++) {
-            Filter f = filters[i];
+            PanelFilter f = filters[i];
             int w = Math.round(tabW[i] * squeeze);
             int x = tabX;
             tabX += w + Math.round(3 * squeeze);
@@ -653,7 +653,7 @@ public class ControlPanelScreen extends Screen {
         if (options == null) {
             // Contador de módulos activos.
             long on = all.stream().filter(e -> e.toggleable() && e.enabled()).count();
-            long total = all.stream().filter(Entry::toggleable).count();
+            long total = all.stream().filter(PanelCard::toggleable).count();
             String chip = on + "/" + total + " activos";
             int chipX = titleX + font.width(titleC) + 8;
             int chipW = font.width(chip) + 12;
@@ -762,15 +762,15 @@ public class ControlPanelScreen extends Screen {
         }
 
         @Nullable
-        private Entry entry() {
+        private PanelCard entry() {
             int i = scrollRow * cols + slot;
-            List<Entry> list = ControlPanelScreen.this.visible;
+            List<PanelCard> list = ControlPanelScreen.this.visible;
             return i < list.size() ? list.get(i) : null;
         }
 
         @Override
         public void onClick(MouseButtonEvent event, boolean doubleClick) {
-            Entry e = entry();
+            PanelCard e = entry();
             if (e == null) {
                 return;
             }
@@ -790,7 +790,7 @@ public class ControlPanelScreen extends Screen {
 
         @Override
         protected void renderWidget(GuiGraphics g, int mouseX, int mouseY, float partialTick) {
-            Entry e = entry();
+            PanelCard e = entry();
             if (e == null) {
                 return;
             }
@@ -828,7 +828,7 @@ public class ControlPanelScreen extends Screen {
             return getX();
         }
 
-        private void renderCard(GuiGraphics g, Entry e, int x, int y, int w, int ht, float h, float s, float time,
+        private void renderCard(GuiGraphics g, PanelCard e, int x, int y, int w, int ht, float h, float s, float time,
                                 float fadeScroll, long t0) {
             Font f = font;
 
@@ -938,7 +938,7 @@ public class ControlPanelScreen extends Screen {
 
         @Override
         protected void updateWidgetNarration(NarrationElementOutput output) {
-            Entry e = entry();
+            PanelCard e = entry();
             if (e != null) {
                 output.add(net.minecraft.client.gui.narration.NarratedElementType.TITLE, Component.literal(e.name()));
             }

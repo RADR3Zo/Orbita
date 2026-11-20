@@ -11,25 +11,25 @@ import net.minecraft.world.item.Items;
  * perfil o módulo de Nova), en qué categoría va y qué pasa al activarla o abrirla.
  *
  * <p>Separado de la pantalla para que ControlPanelScreen solo se ocupe de dibujar y de las opciones.
- * Para añadir una tarjeta nueva: crea aquí un {@link Entry} y regístralo en {@code ControlPanelScreen#init}.
+ * Para añadir una tarjeta nueva: crea aquí un {@link PanelCard} y regístralo en {@code ControlPanelScreen#init}.
  */
 final class PanelEntries {
     private PanelEntries() {
     }
 
-    enum Filter {
+    enum PanelFilter {
         ALL("Todos"), HUD("HUD"), MECHANIC("Mecánicas"), COSMETIC("Cosméticos"), VISUAL("Visual"), PERF("Rendimiento"),
         OTHER("Otros");
 
         final String label;
 
-        Filter(String label) {
+        PanelFilter(String label) {
             this.label = label;
         }
     }
 
     /** Una tarjeta del menú: un módulo del HUD o una función (zoom, perfil). */
-    interface Entry {
+    interface PanelCard {
         String name();
 
         String description();
@@ -39,7 +39,7 @@ final class PanelEntries {
         /** Objeto de Minecraft que se dibuja como icono de la tarjeta. */
         ItemStack icon();
 
-        Filter filter();
+        PanelFilter filter();
 
         boolean toggleable();
 
@@ -56,7 +56,7 @@ final class PanelEntries {
         }
     }
 
-    record ModuleEntry(HudModule module) implements Entry {
+    record ModuleEntry(HudModule module) implements PanelCard {
         public String iconKey() {
             return module.id();
         }
@@ -77,8 +77,8 @@ final class PanelEntries {
             return module.iconStack();
         }
 
-        public Filter filter() {
-            return module.category() == HudModule.Category.MECHANIC ? Filter.MECHANIC : Filter.HUD;
+        public PanelFilter filter() {
+            return module.category() == HudModule.Category.MECHANIC ? PanelFilter.MECHANIC : PanelFilter.HUD;
         }
 
         public boolean toggleable() {
@@ -99,7 +99,7 @@ final class PanelEntries {
         }
     }
 
-    static final Entry ZOOM = new Entry() {
+    static final PanelCard ZOOM = new PanelCard() {
         public String name() {
             return "Zoom";
         }
@@ -120,8 +120,8 @@ final class PanelEntries {
             return ICON_ZOOM;
         }
 
-        public Filter filter() {
-            return Filter.MECHANIC;
+        public PanelFilter filter() {
+            return PanelFilter.MECHANIC;
         }
 
         public boolean toggleable() {
@@ -146,7 +146,7 @@ final class PanelEntries {
     private static final ItemStack ICON_PROFILE = new ItemStack(Items.ELYTRA);
     private static final ItemStack ICON_FREELOOK = new ItemStack(Items.ENDER_EYE);
 
-    static final Entry FREELOOK = new Entry() {
+    static final PanelCard FREELOOK = new PanelCard() {
         public String name() {
             return "Freelook";
         }
@@ -167,8 +167,8 @@ final class PanelEntries {
             return ICON_FREELOOK;
         }
 
-        public Filter filter() {
-            return Filter.MECHANIC;
+        public PanelFilter filter() {
+            return PanelFilter.MECHANIC;
         }
 
         public boolean toggleable() {
@@ -189,7 +189,7 @@ final class PanelEntries {
         }
     };
 
-    static final Entry PROFILE = new Entry() {
+    static final PanelCard PROFILE = new PanelCard() {
         public String name() {
             return "Perfil y capas";
         }
@@ -210,8 +210,8 @@ final class PanelEntries {
             return ICON_PROFILE;
         }
 
-        public Filter filter() {
-            return Filter.OTHER;
+        public PanelFilter filter() {
+            return PanelFilter.OTHER;
         }
 
         public boolean toggleable() {
@@ -231,7 +231,7 @@ final class PanelEntries {
     };
 
     /** Un módulo traído de Nova (cosméticos, cielos, video, modo ahorro, extras de PvP). */
-    record NovaEntry(dev.orbita.client.nova.module.Module module, ItemStack icon) implements Entry {
+    record NovaEntry(dev.orbita.client.nova.module.Module module, ItemStack icon) implements PanelCard {
         private static final java.util.Map<String, net.minecraft.world.item.Item> ICONS = java.util.Map.ofEntries(
                 java.util.Map.entry("Wings", Items.PHANTOM_MEMBRANE), java.util.Map.entry("Cape", Items.PURPLE_BANNER),
                 java.util.Map.entry("Halo", Items.GLOWSTONE_DUST), java.util.Map.entry("Crown", Items.GOLDEN_HELMET),
@@ -272,17 +272,17 @@ final class PanelEntries {
             return module.getClass().getSimpleName();
         }
 
-        public Filter filter() {
+        public PanelFilter filter() {
             if (module instanceof dev.orbita.client.nova.module.Visual.NoParticles
                     || module instanceof dev.orbita.client.nova.module.Visual.NoClouds
                     || module instanceof dev.orbita.client.nova.module.Visual.NoWeather) {
-                return Filter.PERF;
+                return PanelFilter.PERF;
             }
             return switch (module.category) {
-                case COSMETICS -> Filter.COSMETIC;
-                case SKY, EFFECTS, VISUAL -> Filter.VISUAL;
-                case UTILITY -> module instanceof dev.orbita.client.nova.module.PvpExtras.NameChanger ? Filter.VISUAL : Filter.PERF;
-                default -> Filter.PERF;
+                case COSMETICS -> PanelFilter.COSMETIC;
+                case SKY, EFFECTS, VISUAL -> PanelFilter.VISUAL;
+                case UTILITY -> module instanceof dev.orbita.client.nova.module.PvpExtras.NameChanger ? PanelFilter.VISUAL : PanelFilter.PERF;
+                default -> PanelFilter.PERF;
             };
         }
 
