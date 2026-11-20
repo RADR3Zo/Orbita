@@ -72,6 +72,9 @@ En **Actions** se ejecuta **Publicar release**, que tarda unos 5-10 minutos. Al 
 **Importante:** las PCs que todavía tienen la 1.5.4 no traen el actualizador, así que **esta vez** hay que
 pasarles el `.zip` de la 1.6.0 a mano. A partir de ahí ya se actualizan solas.
 
+> **Otra forma de publicar:** en vez de la etiqueta, sube a la rama `release` con `git push origin main:release`.
+> GitHub crea la etiqueta `vX.Y.Z` solo, con la versión de `gradle.properties`.
+
 ## 6. Publicar una actualización (cada vez que quieras)
 
 1. Haz tus cambios y pruébalos.

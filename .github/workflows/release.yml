@@ -17,6 +17,10 @@ on:
   push:
     tags:
       - 'v*'
+    # También se puede publicar subiendo a la rama "release" (la etiqueta vX.Y.Z se crea sola):
+    #   git push origin main:release
+    branches:
+      - release
 
 permissions:
   contents: write
@@ -46,9 +50,17 @@ jobs:
         shell: pwsh
         run: |
           $version = (Select-String -Path gradle.properties -Pattern '^orbita_version=(.+)$').Matches[0].Groups[1].Value.Trim()
-          $tag = '${{ github.ref_name }}'.TrimStart('v')
-          if ($version -ne $tag) {
-            throw "La etiqueta es v$tag pero gradle.properties dice orbita_version=$version. Cambia uno de los dos."
+          if ('${{ github.ref_type }}' -eq 'tag') {
+            $tag = '${{ github.ref_name }}'.TrimStart('v')
+            if ($version -ne $tag) {
+              throw "La etiqueta es v$tag pero gradle.properties dice orbita_version=$version. Cambia uno de los dos."
+            }
+          } else {
+            # Desde la rama release: no se puede publicar dos veces la misma versión
+            git fetch --tags --quiet
+            if (git tag --list "v$version") {
+              throw "La versión $version ya está publicada. Sube orbita_version en gradle.properties."
+            }
           }
           "VERSION=$version" | Out-File -FilePath $env:GITHUB_ENV -Append
 
@@ -68,6 +80,8 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           name: Órbita ${{ env.VERSION }}
+          tag_name: v${{ env.VERSION }}
+          target_commitish: ${{ github.sha }}
           body_path: dist/novedades.md
           files: |
             dist/Orbita-${{ env.VERSION }}-windows-x64.zip
