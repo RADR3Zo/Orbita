@@ -29,7 +29,7 @@ Después, publicar una versión nueva son solo 3 comandos (paso 6).
 Abre `gradle.properties` y cambia esta línea por tu usuario de GitHub:
 
 ```properties
-github_repo=TU_USUARIO/orbita
+github_repo=RADR3Zo/Orbita
 ```
 
 Por ejemplo, si tu usuario es `jhonmendez`, queda `github_repo=jhonmendez/orbita`.
@@ -44,7 +44,7 @@ En PowerShell, dentro de la carpeta del proyecto (donde está `build.ps1`):
 ```powershell
 git add -A
 git commit -m "Configura mi repositorio de GitHub"
-git remote add origin https://github.com/TU_USUARIO/orbita.git
+git remote add origin https://github.com/RADR3Zo/Orbita.git
 git push -u origin main
 ```
 
