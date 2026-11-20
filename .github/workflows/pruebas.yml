@@ -7,6 +7,9 @@ on:
     branches: [main]
   pull_request:
 
+permissions:
+  contents: write
+
 jobs:
   test:
     runs-on: windows-latest
@@ -23,3 +26,16 @@ jobs:
       - name: Compilar el mod y el launcher y ejecutar las pruebas
         shell: pwsh
         run: ./gradlew.bat :launcher:test :launcher:fatJar --console=plain
+
+      # Cada push a main deja el jar en la release "prueba" (pre-release) para probarlo antes de publicar.
+      # Los launchers instalados NO la descargan: solo miran la última release normal.
+      - name: Subir el jar de prueba
+        if: github.event_name == 'push'
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: prueba
+          name: Versión de prueba (no es una actualización)
+          prerelease: true
+          make_latest: false
+          body: "Compilación de prueba del commit ${{ github.sha }}. No se instala sola en ninguna PC."
+          files: launcher/build/dist/orbita-launcher-*.jar
