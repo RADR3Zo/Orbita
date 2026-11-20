@@ -1,0 +1,66 @@
+# Publica una actualización de Órbita.
+#
+# Cómo usarlo:
+#   1. Sube orbita_version en gradle.properties (por ejemplo 1.5.5) y haz commit.
+#   2. Crea una etiqueta con esa versión y súbela:
+#        git tag v1.5.5
+#        git push origin v1.5.5
+#   3. GitHub compila todo en Windows y crea la release con el .zip, el .jar y su .sha256.
+#      Los launchers que ya están instalados la detectan solos al abrirse.
+#
+# Si en las notas de la release escribes [completa], el launcher pedirá descargar el .zip
+# entero en vez de actualizarse solo (úsalo si cambias el Java incluido o algo fuera del .jar).
+name: Publicar release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Java 21 (el que va dentro de Orbita.exe)
+        id: jdk21
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+
+      - name: Java 25 (para ejecutar Gradle/Loom)
+        id: jdk25
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '25'
+          cache: gradle
+
+      - name: Comprobar que la etiqueta coincide con gradle.properties
+        shell: pwsh
+        run: |
+          $version = (Select-String -Path gradle.properties -Pattern '^orbita_version=(.+)$').Matches[0].Groups[1].Value.Trim()
+          $tag = '${{ github.ref_name }}'.TrimStart('v')
+          if ($version -ne $tag) {
+            throw "La etiqueta es v$tag pero gradle.properties dice orbita_version=$version. Cambia uno de los dos."
+          }
+          "VERSION=$version" | Out-File -FilePath $env:GITHUB_ENV -Append
+
+      - name: Compilar, probar y empaquetar
+        shell: pwsh
+        run: ./build.ps1 -JavaHome '${{ steps.jdk21.outputs.path }}' -GradleJavaHome '${{ steps.jdk25.outputs.path }}' -GithubRepo '${{ github.repository }}'
+
+      - name: Crear la release en GitHub
+        uses: softprops/action-gh-release@v2
+        with:
+          name: Órbita ${{ env.VERSION }}
+          generate_release_notes: true
+          files: |
+            dist/Orbita-${{ env.VERSION }}-windows-x64.zip
+            dist/orbita-launcher-${{ env.VERSION }}.jar
+            dist/orbita-launcher-${{ env.VERSION }}.jar.sha256

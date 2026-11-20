@@ -79,6 +79,7 @@ public final class LauncherFrame extends JFrame {
         if (introEnabled) {
             IntroOverlay.play(this);
         }
+        UpdatePrompt.checkInBackground(this);
     }
 
     private JComponent titleBar() {

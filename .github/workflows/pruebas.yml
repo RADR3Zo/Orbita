@@ -1,0 +1,25 @@
+# Compila y ejecuta las pruebas cada vez que subes cambios a main o abres un pull request.
+# Si algo se rompe, GitHub te avisa con una ❌ en el commit.
+name: Pruebas
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Java 25 (para ejecutar Gradle/Loom)
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '25'
+          cache: gradle
+
+      - name: Compilar el mod y el launcher y ejecutar las pruebas
+        shell: pwsh
+        run: ./gradlew.bat :launcher:test :launcher:fatJar --console=plain

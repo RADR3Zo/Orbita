@@ -10,6 +10,8 @@ public final class LauncherInfo {
     public static final String VERSION;
     public static final String MINECRAFT;
     public static final String FABRIC_LOADER;
+    /** Repositorio de GitHub ("usuario/repo") del que se descargan las actualizaciones. */
+    public static final String GITHUB_REPO;
 
     static {
         Properties p = new Properties();
@@ -23,6 +25,7 @@ public final class LauncherInfo {
         VERSION = p.getProperty("version", "dev");
         MINECRAFT = p.getProperty("minecraft", "1.21.8");
         FABRIC_LOADER = p.getProperty("loader", "0.19.5");
+        GITHUB_REPO = p.getProperty("github", "");
     }
 
     private LauncherInfo() {
