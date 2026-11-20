@@ -1,0 +1,11 @@
+# Finales de línea consistentes entre Windows y GitHub
+* text=auto eol=lf
+*.bat text eol=crlf
+*.ps1 text eol=crlf
+*.cmd text eol=crlf
+
+# Binarios
+*.jar binary
+*.exe binary
+*.png binary
+*.ttf binary
