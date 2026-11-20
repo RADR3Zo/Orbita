@@ -28,6 +28,21 @@ dependencies {
     // Navegador integrado para el login de Microsoft con correo y contraseña (como el launcher oficial)
     implementation 'org.openjfx:javafx-controls:21.0.5:win'
     implementation 'org.openjfx:javafx-web:21.0.5:win'
+
+    // Pruebas automáticas (gradlew :launcher:test)
+    testImplementation platform('org.junit:junit-bom:5.11.4')
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+test {
+    useJUnitPlatform()
+    // Las pruebas no deben tocar tu %APPDATA%\.orbita real
+    systemProperty 'orbita.home', layout.buildDirectory.dir('test-home').get().asFile.absolutePath
+    testLogging {
+        events 'failed'
+        exceptionFormat 'full'
+    }
 }
 
 java {
@@ -53,7 +68,7 @@ processResources {
         into 'bundled'
         rename { 'orbita-client.jar' }
     }
-    def props = [version: version, minecraft: minecraft_version, loader: loader_version]
+    def props = [version: version, minecraft: minecraft_version, loader: loader_version, github: github_repo]
     inputs.properties props
     filesMatching('orbita-launcher.properties') {
         expand props
