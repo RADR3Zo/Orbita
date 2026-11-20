@@ -75,7 +75,7 @@ public final class GameLauncher {
         vars.put("assets_root", GamePaths.assets().toString());
         vars.put("assets_index_name", spec.assetIndex());
         vars.put("auth_uuid", account.uuid());
-        vars.put("auth_access_token", account.accessToken());
+        vars.put("auth_access_token", account.accessToken() == null ? "0" : account.accessToken());
         vars.put("clientid", "");
         vars.put("auth_xuid", account.xuid() == null ? "0" : account.xuid());
         vars.put("user_type", account.isMicrosoft() ? "msa" : "legacy");
@@ -121,13 +121,17 @@ public final class GameLauncher {
                 .directory(gameDir.toFile())
                 .redirectErrorStream(true)
                 .start();
-        process.onExit().thenRun(() -> {
+        // El archivo lleva el token de la sesión: se borra en cuanto Java lo ha leído (lo lee al arrancar),
+        // no al cerrar el juego, para que no se quede en disco mientras juegas.
+        Runnable deleteArgFile = () -> {
             try {
                 Files.deleteIfExists(argFile);
             } catch (IOException ignored) {
-                // no crítico
+                // no crítico: se vuelve a intentar al cerrar el juego
             }
-        });
+        };
+        java.util.concurrent.CompletableFuture.delayedExecutor(10, java.util.concurrent.TimeUnit.SECONDS).execute(deleteArgFile);
+        process.onExit().thenRun(deleteArgFile);
 
         Thread reader = new Thread(() -> {
             try (BufferedReader r = process.inputReader(StandardCharsets.UTF_8)) {

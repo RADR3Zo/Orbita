@@ -22,6 +22,7 @@ import java.util.UUID;
 /**
  * Cuentas guardadas, compartidas con el launcher de Órbita: se leen y escriben en .orbita/launcher.json
  * ("accounts" y "activeAccount"), así una cuenta añadida en el juego también aparece en el launcher y al revés.
+ * Los tokens se guardan cifrados con {@link TokenVault}.
  */
 public final class Accounts {
     /** Misma forma que el Account del launcher. type: "msa" (Microsoft) o "legacy" (sin premium). */
@@ -81,7 +82,7 @@ public final class Accounts {
                 try {
                     Acc a = GSON.fromJson(e, Acc.class);
                     if (a != null && a.name() != null && a.uuid() != null) {
-                        out.add(a);
+                        out.add(revealTokens(a));
                     }
                 } catch (Exception ignored) {
                     // cuenta dañada: se salta
@@ -122,7 +123,7 @@ public final class Accounts {
     private static void save(JsonObject o, List<Acc> l, int active) {
         JsonArray arr = new JsonArray();
         for (Acc a : l) {
-            arr.add(GSON.toJsonTree(a));
+            arr.add(GSON.toJsonTree(protectTokens(a)));
         }
         o.add("accounts", arr);
         o.addProperty("activeAccount", Math.max(0, Math.min(l.size() - 1, active)));
@@ -166,6 +167,20 @@ public final class Accounts {
             active--;
         }
         save(read(), l, active);
+    }
+
+    /** Los tokens se guardan cifrados con {@link TokenVault} (igual que en el launcher); en memoria van en claro. */
+    private static Acc protectTokens(Acc a) {
+        return new Acc(a.type(), a.name(), a.uuid(), TokenVault.protect(a.accessToken()), TokenVault.protect(a.refreshToken()),
+                a.expiresAt(), a.xuid());
+    }
+
+    private static Acc revealTokens(Acc a) {
+        String access = TokenVault.reveal(a.accessToken());
+        String refresh = TokenVault.reveal(a.refreshToken());
+        // Si no se pudo descifrar (archivo de otro equipo), la cuenta queda caducada y pide iniciar sesión otra vez.
+        long expires = access == null && a.premium() ? 0L : a.expiresAt();
+        return new Acc(a.type(), a.name(), a.uuid(), access == null ? "0" : access, refresh, expires, a.xuid());
     }
 
     private static int indexOf(List<Acc> l, Acc acc) {

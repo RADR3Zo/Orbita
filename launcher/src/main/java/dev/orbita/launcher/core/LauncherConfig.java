@@ -3,6 +3,7 @@ package dev.orbita.launcher.core;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import dev.orbita.launcher.core.auth.Account;
+import dev.orbita.launcher.core.auth.AccountJson;
 
 import java.io.IOException;
 import java.io.Reader;
@@ -13,9 +14,11 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 
-/** Ajustes del launcher en %APPDATA%\.orbita\launcher.json. */
+/** Ajustes del launcher en %APPDATA%\.orbita\launcher.json. Los tokens de las cuentas se guardan cifrados. */
 public final class LauncherConfig {
-    private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
+    private static final Gson GSON = new GsonBuilder().setPrettyPrinting()
+            .registerTypeAdapterFactory(new AccountJson()) // tokens cifrados en disco
+            .create();
 
     public String username = "Jugador";
     public int ramMb = defaultRam();
