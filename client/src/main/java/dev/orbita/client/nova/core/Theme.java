@@ -1,23 +1,26 @@
 package dev.orbita.client.nova.core;
 
-/** Color de acento global de la interfaz (como el "Tema de color" de la referencia). */
-public final class Theme {
-    public static final String[] NAMES = {"Purple", "Blue", "Cyan", "Green", "White", "Pink"};
-    private static final int[] RGB = {0x8B5CF6, 0x3B82F6, 0x22D3EE, 0x34D399, 0xF0F0FA, 0xF472B6};
-    private static final int[] LIGHT = {0xC4B5FD, 0x93C5FD, 0xA5F3FC, 0x86EFAC, 0xFFFFFF, 0xFBCFE8};
+import dev.orbita.client.ui.theme.OrbitaTheme;
 
-    public static int index = 0;
+/**
+ * Color de acento de las partes que vienen de Nova (rueda de emotes, avisos...).
+ * Usa el mismo acento que el resto de Órbita ({@link OrbitaTheme#ACCENT}) para que todo combine.
+ */
+public final class Theme {
+    private static final int RGB = OrbitaTheme.ACCENT & 0xFFFFFF;
+    /** Versión clara del acento, para texto o bordes resaltados. */
+    private static final int LIGHT = OrbitaTheme.lerpColor(OrbitaTheme.ACCENT, 0xFFFFFFFF, 0.45f) & 0xFFFFFF;
 
     private Theme() { }
 
-    public static int rgb() { return RGB[index]; }
-    public static int accent() { return 0xFF000000 | RGB[index]; }
-    public static int light() { return 0xFF000000 | LIGHT[index]; }
+    public static int rgb() { return RGB; }
+    public static int accent() { return 0xFF000000 | RGB; }
+    public static int light() { return 0xFF000000 | LIGHT; }
     /** Acento con alpha 0..255. */
-    public static int accent(int alpha) { return (clamp(alpha) << 24) | RGB[index]; }
-    public static int lightA(int alpha) { return (clamp(alpha) << 24) | LIGHT[index]; }
-    /** Texto sobre el color de acento (oscuro si el tema es blanco). */
-    public static int onAccent() { return index == 4 ? 0xFF111118 : 0xFFFFFFFF; }
+    public static int accent(int alpha) { return (clamp(alpha) << 24) | RGB; }
+    public static int lightA(int alpha) { return (clamp(alpha) << 24) | LIGHT; }
+    /** Texto sobre el color de acento. */
+    public static int onAccent() { return 0xFFFFFFFF; }
 
     private static int clamp(int a) { return Math.max(0, Math.min(255, a)); }
 }

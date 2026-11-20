@@ -3,45 +3,34 @@ package dev.orbita.client.nova.module;
 import dev.orbita.client.nova.NovaClient;
 import dev.orbita.client.nova.core.Lang;
 import dev.orbita.client.nova.core.Setting;
-import dev.orbita.client.nova.core.Theme;
 
-/** Idioma, tema de color, fondo del menu y modo ahorro. */
+/**
+ * Modo ahorro de Nova (Medio / Extra).
+ *
+ * <p>El idioma ahora sigue al de Minecraft y el color de acento es el de Órbita; antes Nova tenía
+ * sus propios ajustes de idioma, tema, fondo, menú de pausa y nombre del cliente, que en Órbita no se usaban.
+ */
 public final class ClientSettings extends Module {
-    public final Setting.Choice language = add(new Setting.Choice("Language", 1, Lang.NAMES));
-    public final Setting.Choice theme = add(new Setting.Choice("Theme", 0, Theme.NAMES));
-    public final Setting.Choice background = add(new Setting.Choice("Menu background", 0, "Threads & crystals", "White aura"));
-    /** Estilo del menu de inicio: el de Nova o el de Halloween (jugador en el centro, calabazas, murcielagos, cursor propio). */
-    public final Setting.Choice menuStyle = add(new Setting.Choice("Menu style", 1, "Nova", "Halloween"));
     /** Antes era un si/no; se lee una vez para pasar al nuevo modo (oculto). */
     public final Setting.Bool eco = add(new Setting.Bool("Eco mode", false)).showIf(() -> false);
     public final Setting.Choice saving = add(new Setting.Choice("Saving mode", 0, "Disabled", "Mid", "Extra"));
     /** Opciones beta del modo ahorro (experimentales, mas FPS): resolucion del mundo al 80 %. Puede verse un poco borroso. */
     public final Setting.Bool betaBoost = add(new Setting.Bool("Beta boost (experimental)", false));
-    public final Setting.Bool customMenus = add(new Setting.Bool("Nova style in Minecraft menus", true));
-    /** Menu de pausa (Escape): el normal de Minecraft (asi se ven los botones de otros mods, p. ej. Mod Menu) o el de Nova. */
-    public final Setting.Choice pauseMenu = add(new Setting.Choice("Pause menu", 0, "Minecraft", "Nova"));
-    public final Setting.Str clientName = add(new Setting.Str("Client name", "Nova Client", 20));
-    private String lastName;
     /** Como estaban los modulos antes de prender el modo ahorro (oculto). */
     private final Setting.Pick ecoPrev = add(new Setting.Pick("EcoPrev", "", java.util.List::of)).showIf(() -> false);
     private Integer lastLevel;
 
     public ClientSettings() {
-        super("Client Settings", "Language, theme, background and eco mode", Category.SETTINGS);
+        super("Client Settings", "Saving mode", Category.SETTINGS);
         alwaysOn = true; enabled = true; expanded = true;
     }
 
     public void apply() {
-        Lang.index = language.index;
-        Theme.index = theme.index;
+        Lang.followMinecraft();
     }
 
     @Override public void onTick() {
         apply();
-        if (!clientName.value.equals(lastName)) { // nombre nuevo: tambien en el titulo de la ventana
-            lastName = clientName.value;
-            net.minecraft.client.Minecraft.getInstance().updateTitle();
-        }
         if (lastLevel == null) { // al abrir
             if (eco.value) { eco.value = false; if (saving.index == 0) saving.index = 1; } // ajuste viejo
             if (!ecoPrev.value.isEmpty() && !ecoPrev.value.startsWith("v2")) restoreOld();
@@ -139,10 +128,7 @@ public final class ClientSettings extends Module {
 
     public static boolean extra() { return level() >= 2; }
 
-    public static boolean halloween() { ClientSettings c = get(); return c != null && c.menuStyle.index == 1; }
 
-    /** true = usar el menu de pausa propio de Nova (por defecto se usa el de Minecraft). */
-    public static boolean novaPause() { ClientSettings c = get(); return c != null && c.pauseMenu.index == 1; }
 
     /** Opcion beta del modo ahorro: resolucion del mundo al 80 % (mas FPS en PC con tarjeta grafica). */
     public static boolean betaBoost() { ClientSettings c = get(); return c != null && c.betaBoost.value; }
@@ -152,16 +138,6 @@ public final class ClientSettings extends Module {
         ClientSettings c = NovaClient.modules.get(ClientSettings.class);
         return c != null && c.saving.index > 0;
     }
-
-    /** Nombre del cliente que eligio el jugador (sale en el menu, el HUD y la ventana). */
-    public static String name() {
-        ClientSettings c = get();
-        String n = c == null ? "" : c.clientName.value.trim();
-        return n.isEmpty() ? "Nova Client" : n;
-    }
-    public static String upper() { return name().toUpperCase(java.util.Locale.ROOT); }
-    /** Primera palabra en mayusculas (para la marca de agua). */
-    public static String shortName() { String n = upper(); int sp = n.indexOf(' '); return sp > 0 ? n.substring(0, sp) : n; }
 
     public static ClientSettings get() { return NovaClient.modules == null ? null : NovaClient.modules.get(ClientSettings.class); }
 }

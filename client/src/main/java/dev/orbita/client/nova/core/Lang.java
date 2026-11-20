@@ -8,6 +8,17 @@ public final class Lang {
     public static final String[] NAMES = {"English", "Español", "Português"};
     public static int index = 1;
 
+    /** Usa el idioma que tengas elegido en Minecraft: español, portugués o, si no, inglés. */
+    public static void followMinecraft() {
+        String code = "";
+        try {
+            code = net.minecraft.client.Minecraft.getInstance().options.languageCode;
+        } catch (Throwable ignored) {
+            // todavía no hay opciones cargadas
+        }
+        index = code == null ? 1 : code.startsWith("es") ? 1 : code.startsWith("pt") ? 2 : code.startsWith("en") ? 0 : 1;
+    }
+
     private static final Map<String, String[]> T = new HashMap<>();
 
     private static void a(String en, String es, String pt) { T.put(en, new String[]{en, es, pt}); }
